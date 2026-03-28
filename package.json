@@ -1,0 +1,20 @@
+{
+  "name": "medsta-whatsapp-automation",
+  "version": "1.0.0",
+  "description": "MEDSTA WhatsApp automation backend with quote broadcast engine",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "lint": "echo \"Add ESLint if needed\""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.1"
+  }
+}

@@ -1,0 +1,619 @@
+{
+  "name": "MEDSTA Request Router Final",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "medsta-request-created",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook_node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.event }}",
+              "rightValue": "request.created",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if_request_created",
+      "name": "If Request Created",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "rightValue": "MEDICINE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "rightValue": "LAB",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "rightValue": "DOCTOR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ((($json.request.type || '').toUpperCase() === 'PHYSIO') ? 'PHYSIOTHERAPY' : ($json.request.type || '').toUpperCase()) }}",
+                    "rightValue": "PHYSIOTHERAPY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "rightValue": "RADIOLOGY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "switch_by_type",
+      "name": "Switch by Service Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "serviceType",
+              "value": "={{ $json.request.type || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "requestId",
+              "value": "={{ $json.request.id || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.request.userPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "emittedAt",
+              "value": "={{ $json.emittedAt || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "branch",
+              "value": "MEDICINE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_medicine",
+      "name": "Medicine Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        980,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "serviceType",
+              "value": "={{ $json.request.type || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "requestId",
+              "value": "={{ $json.request.id || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.request.userPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "emittedAt",
+              "value": "={{ $json.emittedAt || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "branch",
+              "value": "LAB",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_lab",
+      "name": "Lab Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        980,
+        190
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "serviceType",
+              "value": "={{ $json.request.type || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "requestId",
+              "value": "={{ $json.request.id || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.request.userPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "emittedAt",
+              "value": "={{ $json.emittedAt || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "branch",
+              "value": "DOCTOR",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_doctor",
+      "name": "Doctor Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        980,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "serviceType",
+              "value": "={{ $json.request.type || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "requestId",
+              "value": "={{ $json.request.id || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.request.userPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "emittedAt",
+              "value": "={{ $json.emittedAt || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "branch",
+              "value": "PHYSIOTHERAPY",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_physio",
+      "name": "Physiotherapy Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        980,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "serviceType",
+              "value": "={{ $json.request.type || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "requestId",
+              "value": "={{ $json.request.id || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.request.userPhone || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "emittedAt",
+              "value": "={{ $json.emittedAt || '' }}",
+              "type": "string"
+            },
+            {
+              "name": "branch",
+              "value": "RADIOLOGY",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set_radiology",
+      "name": "Radiology Set",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        980,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\":true,\"routed\":true,\"requestId\":$json.requestId || ''}",
+        "options": {}
+      },
+      "id": "respond_node",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+              "conditions": [
+                {
+                  "leftValue": "={{ $json.headers?.['x-medsta-automation-key'] || '' }}",
+                  "rightValue": "f9db218d0eafc47b2bf43d8a08edfe569e229cb64a5410bd",
+                  "operator": {
+                    "type": "string",
+                    "operation": "equals"
+                  }
+                }
+              ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if_auth_key_valid",
+      "name": "If Automation Key Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\":false,\"error\":\"unauthorized\"}",
+        "options": {}
+      },
+      "id": "respond_unauthorized",
+      "name": "Respond Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        560,
+        470
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\":true,\"routed\":false,\"reason\":\"unsupported_event_or_service\"}",
+        "options": {}
+      },
+      "id": "respond_fallback",
+      "name": "Respond Fallback",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        470
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If Automation Key Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Request Created": {
+      "main": [
+        [
+          {
+            "node": "Switch by Service Type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch by Service Type": {
+      "main": [
+        [
+          {
+            "node": "Medicine Set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lab Set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Doctor Set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Physiotherapy Set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Radiology Set",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medicine Set": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lab Set": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Doctor Set": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Physiotherapy Set": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Radiology Set": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Automation Key Valid": {
+      "main": [
+        [
+          {
+            "node": "If Request Created",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
