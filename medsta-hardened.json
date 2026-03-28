@@ -410,7 +410,7 @@
               "conditions": [
                 {
                   "leftValue": "={{ $json.headers?.['x-medsta-automation-key'] || '' }}",
-                  "rightValue": "f9db218d0eafc47b2bf43d8a08edfe569e229cb64a5410bd",
+                  "rightValue": "SET_IN_N8N_NODE",
                   "operator": {
                     "type": "string",
                     "operation": "equals"
