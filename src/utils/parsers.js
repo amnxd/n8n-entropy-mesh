@@ -15,7 +15,8 @@ const detailsSchemaByType = {
     age: z.coerce.number().int().positive(),
     prescription: z.string().optional().default("Not provided"),
     medicine: z.string().min(2),
-    dosagedays: z.string().min(1)
+    dosagedays: z.string().min(1),
+    address: z.string().min(5)
   }),
   LAB: z.object({
     name: z.string().min(2),

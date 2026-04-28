@@ -15,7 +15,8 @@
       "position": [
         220,
         300
-      ]
+      ],
+      "webhookId": "11111111-1111-4111-8111-111111111111"
     },
     {
       "parameters": {
@@ -28,7 +29,7 @@
           },
           "conditions": [
             {
-              "leftValue": "={{ $json.event }}",
+              "leftValue": "={{ $json.body.event }}",
               "rightValue": "request.created",
               "operator": {
                 "type": "string",
@@ -63,7 +64,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "leftValue": "={{ ($json.body.request.type || '').toUpperCase() }}",
                     "rightValue": "MEDICINE",
                     "operator": {
                       "type": "string",
@@ -84,7 +85,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "leftValue": "={{ ($json.body.request.type || '').toUpperCase() }}",
                     "rightValue": "LAB",
                     "operator": {
                       "type": "string",
@@ -105,7 +106,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "leftValue": "={{ ($json.body.request.type || '').toUpperCase() }}",
                     "rightValue": "DOCTOR",
                     "operator": {
                       "type": "string",
@@ -126,7 +127,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ((($json.request.type || '').toUpperCase() === 'PHYSIO') ? 'PHYSIOTHERAPY' : ($json.request.type || '').toUpperCase()) }}",
+                    "leftValue": "={{ ((($json.body.request.type || '').toUpperCase() === 'PHYSIO') ? 'PHYSIOTHERAPY' : ($json.body.request.type || '').toUpperCase()) }}",
                     "rightValue": "PHYSIOTHERAPY",
                     "operator": {
                       "type": "string",
@@ -147,7 +148,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ($json.request.type || '').toUpperCase() }}",
+                    "leftValue": "={{ ($json.body.request.type || '').toUpperCase() }}",
                     "rightValue": "RADIOLOGY",
                     "operator": {
                       "type": "string",
@@ -179,22 +180,22 @@
           "assignments": [
             {
               "name": "serviceType",
-              "value": "={{ $json.request.type || '' }}",
+              "value": "={{ $json.body.request.type || '' }}",
               "type": "string"
             },
             {
               "name": "requestId",
-              "value": "={{ $json.request.id || '' }}",
+              "value": "={{ $json.body.request.id || '' }}",
               "type": "string"
             },
             {
               "name": "userPhone",
-              "value": "={{ $json.request.userPhone || '' }}",
+              "value": "={{ $json.body.request.userPhone || '' }}",
               "type": "string"
             },
             {
               "name": "emittedAt",
-              "value": "={{ $json.emittedAt || '' }}",
+              "value": "={{ $json.body.emittedAt || '' }}",
               "type": "string"
             },
             {
@@ -221,22 +222,22 @@
           "assignments": [
             {
               "name": "serviceType",
-              "value": "={{ $json.request.type || '' }}",
+              "value": "={{ $json.body.request.type || '' }}",
               "type": "string"
             },
             {
               "name": "requestId",
-              "value": "={{ $json.request.id || '' }}",
+              "value": "={{ $json.body.request.id || '' }}",
               "type": "string"
             },
             {
               "name": "userPhone",
-              "value": "={{ $json.request.userPhone || '' }}",
+              "value": "={{ $json.body.request.userPhone || '' }}",
               "type": "string"
             },
             {
               "name": "emittedAt",
-              "value": "={{ $json.emittedAt || '' }}",
+              "value": "={{ $json.body.emittedAt || '' }}",
               "type": "string"
             },
             {
@@ -263,22 +264,22 @@
           "assignments": [
             {
               "name": "serviceType",
-              "value": "={{ $json.request.type || '' }}",
+              "value": "={{ $json.body.request.type || '' }}",
               "type": "string"
             },
             {
               "name": "requestId",
-              "value": "={{ $json.request.id || '' }}",
+              "value": "={{ $json.body.request.id || '' }}",
               "type": "string"
             },
             {
               "name": "userPhone",
-              "value": "={{ $json.request.userPhone || '' }}",
+              "value": "={{ $json.body.request.userPhone || '' }}",
               "type": "string"
             },
             {
               "name": "emittedAt",
-              "value": "={{ $json.emittedAt || '' }}",
+              "value": "={{ $json.body.emittedAt || '' }}",
               "type": "string"
             },
             {
@@ -305,22 +306,22 @@
           "assignments": [
             {
               "name": "serviceType",
-              "value": "={{ $json.request.type || '' }}",
+              "value": "={{ $json.body.request.type || '' }}",
               "type": "string"
             },
             {
               "name": "requestId",
-              "value": "={{ $json.request.id || '' }}",
+              "value": "={{ $json.body.request.id || '' }}",
               "type": "string"
             },
             {
               "name": "userPhone",
-              "value": "={{ $json.request.userPhone || '' }}",
+              "value": "={{ $json.body.request.userPhone || '' }}",
               "type": "string"
             },
             {
               "name": "emittedAt",
-              "value": "={{ $json.emittedAt || '' }}",
+              "value": "={{ $json.body.emittedAt || '' }}",
               "type": "string"
             },
             {
@@ -347,22 +348,22 @@
           "assignments": [
             {
               "name": "serviceType",
-              "value": "={{ $json.request.type || '' }}",
+              "value": "={{ $json.body.request.type || '' }}",
               "type": "string"
             },
             {
               "name": "requestId",
-              "value": "={{ $json.request.id || '' }}",
+              "value": "={{ $json.body.request.id || '' }}",
               "type": "string"
             },
             {
               "name": "userPhone",
-              "value": "={{ $json.request.userPhone || '' }}",
+              "value": "={{ $json.body.request.userPhone || '' }}",
               "type": "string"
             },
             {
               "name": "emittedAt",
-              "value": "={{ $json.emittedAt || '' }}",
+              "value": "={{ $json.body.emittedAt || '' }}",
               "type": "string"
             },
             {
@@ -386,7 +387,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\"ok\":true,\"routed\":true,\"requestId\":$json.requestId || ''}",
+        "responseBody": "={{ JSON.stringify({ ok: true, routed: true, requestId: $('Webhook').item.json.body.request.id || '', branch: ($('Webhook').item.json.body.request.type || '').toUpperCase() }) }}",
         "options": {}
       },
       "id": "respond_node",
@@ -433,7 +434,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\"ok\":false,\"error\":\"unauthorized\"}",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: 'unauthorized' }) }}",
         "options": {}
       },
       "id": "respond_unauthorized",
@@ -448,7 +449,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\"ok\":true,\"routed\":false,\"reason\":\"unsupported_event_or_service\"}",
+        "responseBody": "={{ JSON.stringify({ ok: true, routed: false, reason: 'unsupported_event_or_service' }) }}",
         "options": {}
       },
       "id": "respond_fallback",

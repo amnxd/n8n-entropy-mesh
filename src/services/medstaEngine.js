@@ -42,7 +42,8 @@ class MedstaEngine {
     const conversation = this.store.getConversation(userPhone);
     const lowered = text.toLowerCase();
 
-    if (["/start", "start", "menu", "hi", "hello"].includes(lowered)) {
+    const menuTriggers = ["/start", "start", "menu", "hi", "hello", "hey", "help"];
+    if (menuTriggers.includes(lowered) || conversation.state === USER_STATE.NEW) {
       this.store.resetConversation(userPhone);
       await this.gateway.sendMessage(userPhone, getWelcomeMenu());
       return { role: "user", reply: "Welcome menu sent." };
@@ -139,18 +140,29 @@ class MedstaEngine {
       await this.gateway.sendMessage(
         selectedQuote.providerPhone,
         [
-          "✅ ORDER CONFIRMED",
+          "✅ Order Confirmed",
+          ``,
           `Request ID: ${request.id}`,
-          `Name: ${request.details.name}`,
+          `Patient: ${request.details.name}`,
           `Age: ${request.details.age}`,
           `Phone: ${request.userPhone}`,
-          `Address: ${request.details.address || "Will be shared on call"}`
+          `Address: ${request.details.address || "Will be shared on call"}`,
+          `Requirement: ${this.buildRequirementText(request)}`,
+          `Quoted Price: ₹${selectedQuote.price}`,
+          `ETA: ${selectedQuote.etaMinutes} mins`
         ].join("\n")
       );
 
       await this.gateway.sendMessage(
         userPhone,
-        `✅ ORDER CONFIRMED\nRequest ID: ${request.id}\nProvider: ${selectedQuote.providerName}`
+        [
+          "✅ Order Confirmed",
+          ``,
+          `Request ID: ${request.id}`,
+          `Provider: ${selectedQuote.providerName}`,
+          `Price: ₹${selectedQuote.price}`,
+          `ETA: ${selectedQuote.etaMinutes} mins`
+        ].join("\n")
       );
 
       this.store.resetConversation(userPhone);
@@ -181,10 +193,13 @@ class MedstaEngine {
       await this.gateway.sendMessage(
         doctor.phone,
         [
-          "New Patient",
+          "👨‍⚕️ New Patient Request",
+          ``,
+          `Request ID: ${request.id}`,
           `Name: ${request.details.name}`,
           `Age: ${request.details.age}`,
           `Symptoms: ${request.details.symptoms}`,
+          `Preferred Time: ${request.details.preferredtime}`,
           `Phone: ${request.userPhone}`
         ].join("\n")
       );
@@ -244,7 +259,11 @@ class MedstaEngine {
     await this.gateway.sendMessage(provider.phone, `Quote received for ${request.id}.`);
 
     const quotes = this.rankQuotes(this.store.getQuotes(request.id));
-    if (quotes.length >= this.config.maxQuotesToWait) {
+    const totalProviders = getProvidersByType(request.type).length;
+    const reachedCap = quotes.length >= this.config.maxQuotesToWait;
+    const allResponded = totalProviders > 0 && quotes.length >= totalProviders;
+
+    if (reachedCap || allResponded) {
       await this.sendAggregatedOptionsToUser(request.id);
       return { role: "provider", reply: "Quote accepted and aggregated." };
     }
@@ -264,18 +283,29 @@ class MedstaEngine {
   async broadcastRequestToProviders(request) {
     const targets = getProvidersByType(request.type);
 
+    const headerByType = {
+      [SERVICE_TYPES.MEDICINE]: "📢 MEDSTA NEW MEDICINE REQUEST",
+      [SERVICE_TYPES.LAB]: "📢 MEDSTA NEW LAB TEST REQUEST",
+      [SERVICE_TYPES.PHYSIO]: "📢 MEDSTA NEW PHYSIOTHERAPY REQUEST",
+      [SERVICE_TYPES.RADIOLOGY]: "📢 MEDSTA NEW RADIOLOGY REQUEST"
+    };
+
     for (const provider of targets) {
-      const message = [
-        `📢 MEDSTA REQUEST`,
+      const lines = [
+        headerByType[request.type] || "📢 MEDSTA NEW REQUEST",
         ``,
         `Request ID: ${request.id}`,
-        `Age: ${request.details.age}`,
-        `Requirement: ${this.buildRequirementText(request)}`,
-        ``,
-        getProviderQuoteFormat()
-      ].join("\n");
+        `Patient Age: ${request.details.age}`,
+        `Requirement: ${this.buildRequirementText(request)}`
+      ];
 
-      await this.gateway.sendMessage(provider.phone, message);
+      if (request.details.address) {
+        lines.push(`Area: ${request.details.address}`);
+      }
+
+      lines.push(``, getProviderQuoteFormat());
+
+      await this.gateway.sendMessage(provider.phone, lines.join("\n"));
     }
 
     await this.triggerN8nWorkflow(request, targets);
@@ -353,14 +383,30 @@ class MedstaEngine {
       return;
     }
 
-    const optionsLines = ["💊 Available Options", ""];
+    const headerByType = {
+      [SERVICE_TYPES.MEDICINE]: "💊 MEDSTA Medicine Options",
+      [SERVICE_TYPES.LAB]: "🧪 MEDSTA Lab Test Options",
+      [SERVICE_TYPES.PHYSIO]: "🦴 MEDSTA Physiotherapy Options",
+      [SERVICE_TYPES.RADIOLOGY]: "🩻 MEDSTA Radiology Options"
+    };
+    const providerLabel = request.type === SERVICE_TYPES.LAB ? "Lab" :
+                          request.type === SERVICE_TYPES.RADIOLOGY ? "Center" :
+                          request.type === SERVICE_TYPES.PHYSIO ? "Provider" : "Pharmacy";
+    const etaLabel = request.type === SERVICE_TYPES.LAB ? "Sample collection in"
+                   : request.type === SERVICE_TYPES.PHYSIO ? "Visit in"
+                   : request.type === SERVICE_TYPES.RADIOLOGY ? "Slot in"
+                   : "Delivery";
+
+    const optionsLines = [headerByType[request.type] || "Available Options", ""];
     for (let i = 0; i < quotes.length; i += 1) {
       const quote = quotes[i];
-      optionsLines.push(`${i + 1}️⃣ ${quote.providerName}`);
-      optionsLines.push(`₹${quote.price} | ${quote.etaMinutes} mins`);
+      optionsLines.push(`Option ${i + 1}`);
+      optionsLines.push(`${providerLabel}: ${quote.providerName}`);
+      optionsLines.push(`Price: ₹${quote.price}`);
+      optionsLines.push(`${etaLabel}: ${quote.etaMinutes} mins`);
       optionsLines.push("");
     }
-    optionsLines.push("Reply with option number to confirm.");
+    optionsLines.push("Reply with the option number to confirm.");
 
     await this.gateway.sendMessage(request.userPhone, optionsLines.join("\n"));
 
@@ -378,10 +424,14 @@ class MedstaEngine {
     for (let i = 0; i < options.length; i += 1) {
       const doctor = options[i];
       lines.push(`${i + 1}️⃣ ${doctor.name}`);
-      lines.push(`${doctor.experienceYears} yrs exp | ₹${doctor.fee}`);
+      if (doctor.specialty) {
+        lines.push(doctor.specialty);
+      }
+      lines.push(`Experience: ${doctor.experienceYears} years`);
+      lines.push(`Consultation: ₹${doctor.fee}`);
       lines.push("");
     }
-    lines.push("Reply with number to book.");
+    lines.push("Reply with the doctor number to book.");
 
     await this.gateway.sendMessage(userPhone, lines.join("\n"));
   }

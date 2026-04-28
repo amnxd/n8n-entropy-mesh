@@ -27,7 +27,11 @@ function getServicePrompt(serviceType) {
       "Age: ",
       "Prescription: ",
       "Medicine: ",
-      "DosageDays: "
+      "DosageDays: ",
+      "Address: ",
+      "",
+      "⚡ Average delivery: 30–90 minutes",
+      "💰 Up to 20–30% savings"
     ],
     LAB: [
       "🧪 Lab Test at Home",

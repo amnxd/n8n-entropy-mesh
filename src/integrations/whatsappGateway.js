@@ -25,7 +25,7 @@ class WhatsAppGateway {
     this.mode = String(config.mode || "mock").toLowerCase();
     this.phoneNumberId = config.phoneNumberId || "";
     this.accessToken = config.accessToken || "";
-    this.apiVersion = config.apiVersion || "v18.0";
+    this.apiVersion = config.apiVersion || "v21.0";
     this.timeoutMs = Number(config.timeoutMs || 10000);
 
     if (this.mode === "cloud" && (!this.phoneNumberId || !this.accessToken)) {
@@ -55,7 +55,7 @@ class WhatsAppGateway {
    * Reference: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
    */
   async sendViaCloudApi(to, text) {
-    const url = `https://graph.instagram.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+    const url = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
     const normalizedPhone = normalizePhone(to);
 
     const payload = {

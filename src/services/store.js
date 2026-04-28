@@ -7,7 +7,7 @@ const conversationByUser = new Map();
 function getConversation(phone) {
   if (!conversationByUser.has(phone)) {
     conversationByUser.set(phone, {
-      state: USER_STATE.AWAITING_SERVICE_SELECTION,
+      state: USER_STATE.NEW,
       selectedService: null,
       activeRequestId: null,
       quoteOptions: [],

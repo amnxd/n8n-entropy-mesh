@@ -12,8 +12,8 @@ const providers = [
 ];
 
 const doctors = [
-  { phone: "919911111001", name: "Dr. Amit Verma", experienceYears: 12, fee: 400 },
-  { phone: "919911111002", name: "Dr. Neha Sharma", experienceYears: 9, fee: 350 }
+  { phone: "919911111001", name: "Dr. Amit Verma", specialty: "General Physician", experienceYears: 12, fee: 400 },
+  { phone: "919911111002", name: "Dr. Neha Sharma", specialty: "Internal Medicine", experienceYears: 9, fee: 350 }
 ];
 
 function getProvidersByType(type) {
